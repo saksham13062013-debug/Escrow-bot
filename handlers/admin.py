@@ -35,7 +35,7 @@ def is_admin(uid: int) -> bool:
     return uid in ADMIN_IDS
 
 
-@router.message(F.text.in_(["Admin Panel", "🛠 Admin Panel", "🛠 एडमिन पैनल"])
+@router.message(F.text.in_(["Admin Panel", "🛠 Admin Panel", "🛠 एडमिन पैनल"]))
 async def admin_panel(message: Message):
     if not is_admin(message.from_user.id):
         await message.answer("⛔ Access denied.")
