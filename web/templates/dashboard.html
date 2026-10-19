@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — MM Escrow{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+
+<div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Users</div>
+    <div class="text-3xl font-bold">{{ stats.users }}</div>
+    <div class="text-xs text-red-500">Banned: {{ stats.banned }}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Total Deals</div>
+    <div class="text-3xl font-bold">{{ stats.total_deals }}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Active</div>
+    <div class="text-3xl font-bold text-blue-600">{{ stats.active }}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Completed</div>
+    <div class="text-3xl font-bold text-green-600">{{ stats.completed }}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Disputed</div>
+    <div class="text-3xl font-bold text-orange-500">{{ stats.disputed }}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Volume</div>
+    <div class="text-3xl font-bold">{{ stats.volume }}</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Platform Fee</div>
+    <div class="text-3xl font-bold">{{ fee }}%</div>
+  </div>
+  <div class="bg-white rounded-xl shadow p-5">
+    <div class="text-sm text-gray-500">Maintenance</div>
+    <div class="text-3xl font-bold {% if maintenance %}text-red-600{% else %}text-green-600{% endif %}">
+      {% if maintenance %}ON{% else %}OFF{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="bg-white rounded-xl shadow p-6">
+  <h2 class="font-semibold mb-4">Quick Actions</h2>
+  <div class="flex flex-wrap gap-3">
+    <a href="/deals" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl shadow hover:shadow-md transition">📋 View All Deals</a>
+    <a href="/users" class="px-5 py-2.5 bg-violet-600 hover:bg-violet-700 text-white font-medium rounded-xl shadow hover:shadow-md transition">👥 Manage Users</a>
+    <a href="/settings" class="px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-medium rounded-xl shadow hover:shadow-md transition">⚙️ Settings</a>
+  </div>
+</div>
+
+{% endblock %}

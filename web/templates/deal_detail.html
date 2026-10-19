@@ -1,0 +1,147 @@
+{% extends "base.html" %}
+{% block title %}Deal #{{ deal.id }} — MM Escrow{% endblock %}
+{% block content %}
+<div class="flex items-center justify-between mb-6">
+  <div>
+    <a href="/deals" class="text-sm text-blue-600 hover:underline">← Back to deals</a>
+    <h1 class="text-2xl font-bold mt-1">Deal #{{ deal.id }}
+      {% if deal.trade_id %}<span class="text-gray-400 text-lg font-normal">({{ deal.trade_id }})</span>{% endif %}
+    </h1>
+  </div>
+  <span class="px-3 py-1 rounded-full text-sm font-medium
+    {% if deal.status == 'completed' %}bg-green-100 text-green-700
+    {% elif deal.status == 'disputed' %}bg-red-100 text-red-700
+    {% elif deal.status == 'paid' %}bg-blue-100 text-blue-700
+    {% elif deal.status == 'payment_set' %}bg-indigo-100 text-indigo-700
+    {% else %}bg-gray-100 text-gray-700{% endif %}">
+    {{ deal.status }}
+  </span>
+</div>
+
+<div class="grid md:grid-cols-2 gap-6 mb-6">
+  <!-- Deal Info -->
+  <div class="bg-white rounded-xl shadow-md p-6 space-y-4">
+    <h2 class="font-semibold text-lg border-b pb-2">📋 Deal Information</h2>
+    <div class="grid grid-cols-2 gap-3 text-sm">
+      <div>
+        <span class="text-gray-500">Type</span>
+        <div class="font-medium">
+          <span class="px-2 py-0.5 rounded text-xs {% if deal.deal_type == 'crypto' %}bg-purple-100 text-purple-700{% else %}bg-emerald-100 text-emerald-700{% endif %}">
+            {{ deal.deal_type | upper }}
+          </span>
+        </div>
+      </div>
+      <div>
+        <span class="text-gray-500">Amount</span>
+        <div class="font-bold text-xl text-slate-800">{{ deal.amount }} {{ deal.currency }}</div>
+      </div>
+      <div>
+        <span class="text-gray-500">Buyer ID</span>
+        <div class="font-mono text-blue-600">{{ deal.buyer_id }}</div>
+      </div>
+      <div>
+        <span class="text-gray-500">Seller ID</span>
+        <div class="font-mono text-green-600">{{ deal.seller_id }}</div>
+      </div>
+    </div>
+    <div>
+      <span class="text-gray-500 text-sm">Description</span>
+      <div class="mt-1">{{ deal.description or '—' }}</div>
+    </div>
+    {% if deal.expected_time %}
+    <div><span class="text-gray-500 text-sm">Expected Time</span><div>{{ deal.expected_time }}</div></div>
+    {% endif %}
+    {% if deal.terms %}
+    <div><span class="text-gray-500 text-sm">T/C</span><div>{{ deal.terms }}</div></div>
+    {% endif %}
+    <div class="text-xs text-gray-400">Created: {{ deal.created_at }}</div>
+  </div>
+
+  <!-- Payment Details -->
+  <div class="bg-white rounded-xl shadow-md p-6">
+    <h2 class="font-semibold text-lg border-b pb-2 mb-4">🏦 Payment Details</h2>
+    {% if deal.payment_details %}
+    <div class="bg-indigo-50 border border-indigo-100 rounded-lg p-3 font-mono text-sm break-all mb-2 text-indigo-900">
+      {{ deal.payment_details }}
+    </div>
+    {% if deal.payment_note %}<p class="text-sm text-gray-600 mb-4">{{ deal.payment_note }}</p>{% endif %}
+    {% else %}
+    <p class="text-gray-400 text-sm mb-4">Not set yet — add below</p>
+    {% endif %}
+
+    <form method="post" action="/deals/{{ deal.id }}/action" class="space-y-3">
+      <input type="hidden" name="action" value="set_payment">
+      <textarea name="payment_details" rows="2" placeholder="Crypto address or UPI ID (e.g. name@upi)"
+                class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none" required></textarea>
+      <input type="text" name="payment_note" placeholder="Optional note for buyer/seller"
+             class="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-indigo-500 outline-none">
+      <button type="submit"
+              class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 rounded-lg shadow transition">
+        💾 Set / Update Payment Details
+      </button>
+    </form>
+  </div>
+</div>
+
+<!-- COLOURED ACTION BUTTONS -->
+<div class="bg-white rounded-xl shadow-md p-6">
+  <h2 class="font-semibold text-lg mb-5">⚡ Actions</h2>
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+
+    <!-- Confirm Payment - Blue -->
+    <form method="post" action="/deals/{{ deal.id }}/action">
+      <input type="hidden" name="action" value="confirm">
+      <button type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+        💰 Confirm Payment
+      </button>
+    </form>
+
+    <!-- Release - Green -->
+    <form method="post" action="/deals/{{ deal.id }}/action">
+      <input type="hidden" name="action" value="release">
+      <button type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+        ✅ Release Funds
+      </button>
+    </form>
+
+    <!-- Refund - Amber/Yellow -->
+    <form method="post" action="/deals/{{ deal.id }}/action">
+      <input type="hidden" name="action" value="refund">
+      <button type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-amber-500 hover:bg-amber-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+        ↩️ Refund Buyer
+      </button>
+    </form>
+
+    <!-- Dispute - Orange -->
+    <form method="post" action="/deals/{{ deal.id }}/action">
+      <input type="hidden" name="action" value="dispute">
+      <button type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+        ⚠️ Mark Dispute
+      </button>
+    </form>
+
+    <!-- Cancel - Gray -->
+    <form method="post" action="/deals/{{ deal.id }}/action">
+      <input type="hidden" name="action" value="cancel">
+      <button type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-slate-500 hover:bg-slate-600 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+        ❌ Cancel Deal
+      </button>
+    </form>
+
+    <!-- Delete - Red -->
+    <form method="post" action="/deals/{{ deal.id }}/action" onsubmit="return confirm('Delete this deal permanently?')">
+      <input type="hidden" name="action" value="delete">
+      <button type="submit"
+              class="w-full flex items-center justify-center gap-2 px-4 py-3 bg-red-600 hover:bg-red-700 text-white font-semibold rounded-xl shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5">
+        🗑 Delete
+      </button>
+    </form>
+
+  </div>
+</div>
+{% endblock %}

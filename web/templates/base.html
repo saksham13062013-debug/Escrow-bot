@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}MM Escrow Admin{% endblock %}</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body { font-family: 'Inter', system-ui, sans-serif; }
+    .sidebar { min-height: 100vh; }
+  </style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+  <div class="flex">
+    <!-- Sidebar -->
+    <aside class="sidebar w-64 bg-slate-900 text-white p-5 flex flex-col">
+      <div class="text-xl font-bold mb-8 tracking-tight">🛡 MM Escrow</div>
+      <nav class="flex-1 space-y-1">
+        <a href="/" class="block px-3 py-2 rounded hover:bg-slate-700 {% if request.url.path == '/' %}bg-slate-700{% endif %}">📊 Dashboard</a>
+        <a href="/deals" class="block px-3 py-2 rounded hover:bg-slate-700 {% if '/deals' in request.url.path %}bg-slate-700{% endif %}">📋 Deals</a>
+        <a href="/users" class="block px-3 py-2 rounded hover:bg-slate-700 {% if request.url.path == '/users' %}bg-slate-700{% endif %}">👥 Users</a>
+        <a href="/settings" class="block px-3 py-2 rounded hover:bg-slate-700 {% if request.url.path == '/settings' %}bg-slate-700{% endif %}">⚙️ Settings</a>
+      </nav>
+      <a href="/logout" class="block px-3 py-2 rounded hover:bg-red-700 text-red-300 mt-4">Logout</a>
+    </aside>
+
+    <!-- Main -->
+    <main class="flex-1 p-8">
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+</body>
+</html>

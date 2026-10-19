@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block title %}Deals — MM Escrow{% endblock %}
+{% block content %}
+<h1 class="text-2xl font-bold mb-6">All Deals</h1>
+
+<div class="bg-white rounded-xl shadow overflow-x-auto">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-left">
+      <tr>
+        <th class="px-4 py-3">ID</th>
+        <th class="px-4 py-3">Type</th>
+        <th class="px-4 py-3">Amount</th>
+        <th class="px-4 py-3">Status</th>
+        <th class="px-4 py-3">Buyer</th>
+        <th class="px-4 py-3">Seller</th>
+        <th class="px-4 py-3">Description</th>
+        <th class="px-4 py-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in deals %}
+      <tr class="border-t hover:bg-gray-50">
+        <td class="px-4 py-3 font-mono">#{{ d.id }}</td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded text-xs {% if d.deal_type == 'crypto' %}bg-purple-100 text-purple-700{% else %}bg-green-100 text-green-700{% endif %}">
+            {{ d.deal_type }}
+          </span>
+        </td>
+        <td class="px-4 py-3 font-medium">{{ d.amount }} {{ d.currency }}</td>
+        <td class="px-4 py-3">
+          <span class="px-2 py-0.5 rounded text-xs
+            {% if d.status == 'completed' %}bg-green-100 text-green-700
+            {% elif d.status == 'disputed' %}bg-red-100 text-red-700
+            {% elif d.status == 'paid' %}bg-blue-100 text-blue-700
+            {% else %}bg-gray-100 text-gray-700{% endif %}">
+            {{ d.status }}
+          </span>
+        </td>
+        <td class="px-4 py-3 font-mono text-xs">{{ d.buyer_id }}</td>
+        <td class="px-4 py-3 font-mono text-xs">{{ d.seller_id }}</td>
+        <td class="px-4 py-3 max-w-xs truncate">{{ d.description }}</td>
+        <td class="px-4 py-3">
+          <a href="/deals/{{ d.id }}" class="text-blue-600 hover:underline">Open</a>
+        </td>
+      </tr>
+      {% else %}
+      <tr><td colspan="8" class="px-4 py-8 text-center text-gray-400">No deals yet</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
